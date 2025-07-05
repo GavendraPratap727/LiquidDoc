@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - LiquidDocs</title>
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/user.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-trail"></div>
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-card">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="gradient-text">LiquidDocs</span>
+                </div>
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">U</div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="userName">User</div>
+                        <div class="profile-role">Member</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <div class="nav-icon">🏠</div>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="upload">
+                    <div class="nav-icon">📤</div>
+                    <span>Upload</span>
+                </a>
+                <a href="#" class="nav-item" data-section="files">
+                    <div class="nav-icon">📁</div>
+                    <span>My Files</span>
+                </a>
+                <a href="#" class="nav-item" data-section="search">
+                    <div class="nav-icon">🔍</div>
+                    <span>Search</span>
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <div class="nav-icon">⚙️</div>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <div class="theme-icon">🌙</div>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Welcome back to your workspace</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search files..." id="globalSearch">
+                        <div class="search-icon">🔍</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboardSection">
+                    <div class="stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalFiles">0</div>
+                                <div class="stat-label">Total Files</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">💾</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalStorage">0 MB</div>
+                                <div class="stat-label">Storage Used</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">🔒</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="privateFiles">0</div>
+                                <div class="stat-label">Private Files</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">🌐</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="publicFiles">0</div>
+                                <div class="stat-label">Public Files</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-files">
+                        <h3>Recent Files</h3>
+                        <div class="files-list" id="recentFilesList">
+                            <!-- Recent files will be populated here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Upload Section -->
+                <section class="content-section" id="uploadSection">
+                    <div class="upload-container">
+                        <div class="upload-card glass-card">
+                            <div class="upload-zone" id="uploadZone">
+                                <div class="upload-animation">
+                                    <div class="upload-icon">📤</div>
+                                </div>
+                                <h3>Drop files here to upload</h3>
+                                <p>or <button class="link-btn" onclick="document.getElementById('fileInput').click()">browse your device</button></p>
+                                <input type="file" id="fileInput" multiple style="display: none;">
+                                
+                                <div class="privacy-toggle">
+                                    <label class="toggle-label">
+                                        <input type="checkbox" id="privateToggle">
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-text">Private</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="upload-progress hidden" id="uploadProgress">
+                                <div class="progress-header">
+                                    <span>Uploading files...</span>
+                                    <span id="uploadPercent">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <div class="upload-files" id="uploadFilesList">
+                                    <!-- Upload progress for individual files -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Files Section -->
+                <section class="content-section" id="filesSection">
+                    <div class="files-header">
+                        <div class="files-controls">
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" data-filter="all">All Files</button>
+                                <button class="filter-tab" data-filter="public">Public</button>
+                                <button class="filter-tab" data-filter="private">Private</button>
+                            </div>
+                            <div class="view-controls">
+                                <button class="view-btn active" data-view="grid">
+                                    <span>⊞</span>
+                                </button>
+                                <button class="view-btn" data-view="list">
+                                    <span>☰</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="files-grid" id="filesGrid">
+                        <!-- Files will be populated here -->
+                    </div>
+
+                    <div class="empty-state hidden" id="emptyState">
+                        <div class="empty-icon">📁</div>
+                        <h3>No files found</h3>
+                        <p>Upload your first file to get started</p>
+                        <button class="btn-primary" onclick="switchSection('upload')">Upload Files</button>
+                    </div>
+                </section>
+
+                <!-- Search Section -->
+                <section class="content-section" id="searchSection">
+                    <div class="search-container">
+                        <div class="search-header">
+                            <h2>Search Public Files</h2>
+                            <p>Discover and download files shared by other users</p>
+                        </div>
+                        
+                        <div class="search-bar-large">
+                            <input type="text" placeholder="Search for files..." id="publicSearch">
+                            <button class="search-btn" onclick="searchPublicFiles()">
+                                <span>🔍</span>
+                            </button>
+                        </div>
+
+                        <div class="search-results" id="searchResults">
+                            <!-- Search results will be populated here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="content-section" id="settingsSection">
+                    <div class="settings-container">
+                        <h2>Settings</h2>
+                        
+                        <div class="settings-grid">
+                            <div class="setting-card glass-card">
+                                <h3>Profile</h3>
+                                <div class="setting-item">
+                                    <label>Display Name</label>
+                                    <input type="text" id="displayName" placeholder="Enter your name">
+                                </div>
+                                <div class="setting-item">
+                                    <label>Email</label>
+                                    <input type="email" id="userEmail" readonly>
+                                </div>
+                                <button class="btn-primary">Update Profile</button>
+                            </div>
+
+                            <div class="setting-card glass-card">
+                                <h3>Preferences</h3>
+                                <div class="setting-item">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="autoPrivate">
+                                        <span class="checkmark"></span>
+                                        Make uploads private by default
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="notifications">
+                                        <span class="checkmark"></span>
+                                        Enable notifications
+                                    </label>
+                                </div>
+                                <button class="btn-primary">Save Preferences</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div class="modal-overlay hidden" id="previewModal">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3 id="previewTitle">File Preview</h3>
+                <button class="modal-close" onclick="closePreviewModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-content" id="previewContent">
+                    <!-- Preview content will be populated here -->
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closePreviewModal()">Close</button>
+                    <button class="btn-primary" onclick="downloadCurrentFile()">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/user.js"></script>
+</body>
+</html>

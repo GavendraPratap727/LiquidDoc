@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | LiquidDocs</title>
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/error.css">
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-trail"></div>
+    </div>
+
+    <div class="error-container">
+        <div class="wave-bg">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+        </div>
+
+        <div class="error-content">
+            <div class="sad-paper" id="sadPaper">
+                <div class="paper-body">
+                    <div class="paper-face">
+                        <div class="paper-eyes">
+                            <div class="eye left-eye"></div>
+                            <div class="eye right-eye"></div>
+                        </div>
+                        <div class="paper-mouth"></div>
+                    </div>
+                    <div class="paper-lines">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+                <div class="teardrops">
+                    <div class="teardrop teardrop1">💧</div>
+                    <div class="teardrop teardrop2">💧</div>
+                </div>
+            </div>
+
+            <div class="error-text">
+                <h1 class="error-code">404</h1>
+                <h2 class="error-title">Oops! Page Not Found</h2>
+                <p class="error-description">
+                    This page seems to have floated away into the digital void. 
+                    Don't worry, we'll help you find your way back to the liquid flow.
+                </p>
+            </div>
+
+            <div class="error-actions">
+                <button class="btn-primary jump-wiggle" onclick="goHome()">
+                    <span>Go Home</span>
+                    <div class="ripple"></div>
+                </button>
+                <button class="btn-secondary" onclick="goBack()">Go Back</button>
+            </div>
+
+            <div class="easter-egg" id="easterEgg">
+                <div class="dancing-paper" id="dancingPaper">
+                    <div class="paper-body">
+                        <div class="paper-face">
+                            <div class="paper-eyes">
+                                <div class="eye happy-eye left-eye"></div>
+                                <div class="eye happy-eye right-eye"></div>
+                            </div>
+                            <div class="paper-mouth happy-mouth"></div>
+                        </div>
+                        <div class="paper-lines">
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                    <div class="confetti">
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                    </div>
+                </div>
+                <p class="easter-text">You found the dancing paper! 🎉</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/error.js"></script>
+</body>
+</html>

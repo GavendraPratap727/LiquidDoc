@@ -1,0 +1,211 @@
+/* Signup Page Specific Styles */
+.signup-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.signup-layout {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    height: 90vh;
+    max-height: 900px;
+}
+
+/* Left Column - Signup Form */
+.signup-form-container {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    background: var(--card-bg);
+}
+
+/* Right Column - Account Info */
+.account-info {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.account-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMGgxMDB2MTAwSDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTUwIDUwbC01IDVtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBtLTQwIDBsMTAgMTBNNTAgMTBsLTUgMTBtLTQwIDBsMTAgMTBNNTAgMzBsLTUgMTBNMTAgMGwxMCAxME0wIDUwaDEwME0wIDB2MTAwIiBzdHJva2U9IiNmZmZmZmYwMyIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.account-content {
+    position: relative;
+    z-index: 1;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.account-info h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.account-info p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Terms Section */
+.terms-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.terms-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.terms-section p {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.terms-section a {
+    color: white;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.terms-section a:hover {
+    opacity: 0.8;
+}
+
+/* Features Grid */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.feature:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.feature i {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: white;
+}
+
+.feature span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Outline Button */
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin-top: 1rem;
+}
+
+.btn-outline i {
+    margin-right: 0.5rem;
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .signup-layout {
+        flex-direction: column;
+        height: auto;
+        max-height: none;
+    }
+    
+    .signup-form-container,
+    .account-info {
+        flex: none;
+        width: 100%;
+        padding: 2rem 1.5rem;
+    }
+    
+    .account-info {
+        padding: 3rem 1.5rem;
+    }
+    
+    .account-content {
+        max-width: 100%;
+    }
+    
+    .features {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .features {
+        grid-template-columns: 1fr;
+    }
+    
+    .signup-container {
+        padding: 1rem;
+    }
+    
+    .signup-form-container {
+        padding: 1.5rem 1rem;
+    }
+}

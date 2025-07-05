@@ -1,0 +1,479 @@
+/* 404 Error Page Specific Styles */
+
+body {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Wave Background */
+.wave-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100px;
+  background: linear-gradient(90deg, 
+    rgba(59, 130, 246, 0.1) 0%, 
+    rgba(20, 184, 166, 0.1) 50%, 
+    rgba(249, 115, 22, 0.1) 100%);
+  border-radius: 50% 50% 0 0;
+  animation: wave 6s ease-in-out infinite;
+}
+
+.wave1 {
+  animation-delay: 0s;
+  opacity: 0.4;
+}
+
+.wave2 {
+  animation-delay: 2s;
+  opacity: 0.3;
+  height: 80px;
+}
+
+.wave3 {
+  animation-delay: 4s;
+  opacity: 0.2;
+  height: 60px;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(180deg);
+  }
+}
+
+/* Error Container */
+.error-container {
+  text-align: center;
+  z-index: 10;
+  max-width: 600px;
+  padding: var(--space-lg);
+  position: relative;
+}
+
+/* Sad Paper */
+.sad-paper {
+  position: relative;
+  margin: 0 auto var(--space-xl);
+  width: 120px;
+  height: 150px;
+  animation: paperFloat 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+}
+
+.sad-paper:hover {
+  transform: scale(1.1);
+}
+
+@keyframes paperFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+}
+
+.paper-body {
+  width: 100%;
+  height: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 10px 30px var(--glass-shadow);
+}
+
+.paper-face {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 40px;
+}
+
+.paper-eyes {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.eye {
+  width: 12px;
+  height: 12px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  position: relative;
+}
+
+.eye::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+}
+
+.paper-mouth {
+  width: 20px;
+  height: 10px;
+  border: 2px solid var(--text-primary);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  margin: 0 auto;
+}
+
+.paper-lines {
+  position: absolute;
+  bottom: 20px;
+  left: 15px;
+  right: 15px;
+}
+
+.line {
+  height: 2px;
+  background: var(--text-muted);
+  margin-bottom: 6px;
+  opacity: 0.3;
+}
+
+.line:nth-child(1) {
+  width: 80%;
+}
+
+.line:nth-child(2) {
+  width: 60%;
+}
+
+.line:nth-child(3) {
+  width: 90%;
+}
+
+/* Teardrops */
+.teardrops {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.teardrop {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: teardrop 2s ease-in-out infinite;
+}
+
+.teardrop1 {
+  left: -15px;
+  animation-delay: 0s;
+}
+
+.teardrop2 {
+  right: -15px;
+  animation-delay: 1s;
+}
+
+@keyframes teardrop {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(30px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Error Text */
+.error-text {
+  margin-bottom: var(--space-xl);
+}
+
+.error-code {
+  font-size: clamp(4rem, 15vw, 8rem);
+  font-weight: 900;
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: var(--space-md);
+  animation: liquidFlow 3s ease-in-out infinite;
+}
+
+.error-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.error-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Error Actions */
+.error-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-xl);
+}
+
+.jump-wiggle {
+  animation: jumpWiggle 2s ease-in-out infinite;
+}
+
+@keyframes jumpWiggle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+/* Easter Egg */
+.easter-egg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-slow);
+  text-align: center;
+}
+
+.easter-egg.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.dancing-paper {
+  position: relative;
+  width: 120px;
+  height: 150px;
+  margin: 0 auto var(--space-lg);
+  animation: dance 1s ease-in-out infinite;
+}
+
+@keyframes dance {
+  0%, 100% {
+    transform: rotate(-10deg) scale(1);
+  }
+  25% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(-15deg) scale(0.9);
+  }
+  75% {
+    transform: rotate(15deg) scale(1.1);
+  }
+}
+
+.dancing-paper .paper-body {
+  background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+  border-color: var(--success-color);
+}
+
+.happy-eye::after {
+  top: 6px;
+  left: 2px;
+  width: 8px;
+  height: 4px;
+  border-radius: 0 0 8px 8px;
+}
+
+.happy-mouth {
+  border-top: 2px solid var(--text-primary);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  transform: rotate(180deg);
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--accent-color);
+  animation: confetti 2s ease-out infinite;
+}
+
+.confetti-piece:nth-child(1) {
+  left: 20%;
+  background: var(--primary-color);
+  animation-delay: 0s;
+}
+
+.confetti-piece:nth-child(2) {
+  left: 40%;
+  background: var(--secondary-color);
+  animation-delay: 0.2s;
+}
+
+.confetti-piece:nth-child(3) {
+  left: 60%;
+  background: var(--accent-color);
+  animation-delay: 0.4s;
+}
+
+.confetti-piece:nth-child(4) {
+  left: 80%;
+  background: var(--success-color);
+  animation-delay: 0.6s;
+}
+
+.confetti-piece:nth-child(5) {
+  left: 90%;
+  background: var(--warning-color);
+  animation-delay: 0.8s;
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.easter-text {
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 1.1rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .error-container {
+    padding: var(--space-md);
+  }
+  
+  .error-code {
+    font-size: 6rem;
+  }
+  
+  .error-title {
+    font-size: 1.5rem;
+  }
+  
+  .error-description {
+    font-size: 1rem;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 300px;
+    margin: 0 auto var(--space-xl);
+  }
+  
+  .sad-paper {
+    width: 100px;
+    height: 125px;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-code {
+    font-size: 4rem;
+  }
+  
+  .error-title {
+    font-size: 1.25rem;
+  }
+  
+  .sad-paper {
+    width: 80px;
+    height: 100px;
+  }
+  
+  .paper-face {
+    top: 20px;
+    width: 50px;
+    height: 30px;
+  }
+  
+  .eye {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .paper-mouth {
+    width: 15px;
+    height: 8px;
+  }
+  
+  .teardrops {
+    top: 30px;
+  }
+  
+  .teardrop {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - LiquidDocs</title>
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-trail"></div>
+    </div>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar glass-card">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="gradient-text">LiquidDocs</span>
+                    <span class="admin-badge">Admin</span>
+                </div>
+                <div class="admin-profile">
+                    <div class="profile-avatar">A</div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="adminName">Administrator</div>
+                        <div class="profile-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <div class="nav-icon">📊</div>
+                    <span>Dashboard</span>
+                    <div class="nav-glow"></div>
+                </a>
+                <a href="#" class="nav-item" data-section="files">
+                    <div class="nav-icon">📁</div>
+                    <span>All Files</span>
+                    <div class="nav-glow"></div>
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    <div class="nav-icon">👥</div>
+                    <span>Users</span>
+                    <div class="nav-glow"></div>
+                </a>
+                <a href="#" class="nav-item" data-section="analytics">
+                    <div class="nav-icon">📈</div>
+                    <span>Analytics</span>
+                    <div class="nav-glow"></div>
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <div class="nav-icon">⚙️</div>
+                    <span>Settings</span>
+                    <div class="nav-glow"></div>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <div class="theme-icon">🌙</div>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Welcome to the admin control center</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search..." id="adminSearch">
+                        <div class="search-icon">🔍</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="notification-btn">
+                            <span>🔔</span>
+                            <div class="notification-badge">3</div>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboardSection">
+                    <div class="stats-overview">
+                        <div class="stat-card glass-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalFilesAdmin">0</div>
+                                <div class="stat-label">Total Files</div>
+                                <div class="stat-change positive">+12% this month</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card" data-aos="fade-up" data-aos-delay="200">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalUsers">0</div>
+                                <div class="stat-label">Active Users</div>
+                                <div class="stat-change positive">+5% this week</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card" data-aos="fade-up" data-aos-delay="300">
+                            <div class="stat-icon">💾</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalStorageAdmin">0 GB</div>
+                                <div class="stat-label">Storage Used</div>
+                                <div class="stat-change neutral">75% capacity</div>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card" data-aos="fade-up" data-aos-delay="400">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <div class="stat-number">94%</div>
+                                <div class="stat-label">System Health</div>
+                                <div class="stat-change positive">Excellent</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="activity-panel glass-card">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-list" id="activityList">
+                                <!-- Activity items will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="quick-actions glass-card">
+                            <h3>Quick Actions</h3>
+                            <div class="action-buttons">
+                                <button class="action-btn" onclick="switchSection('files')">
+                                    <div class="action-icon">📁</div>
+                                    <span>Manage Files</span>
+                                </button>
+                                <button class="action-btn" onclick="switchSection('users')">
+                                    <div class="action-icon">👥</div>
+                                    <span>User Management</span>
+                                </button>
+                                <button class="action-btn" onclick="showSystemInfo()">
+                                    <div class="action-icon">⚙️</div>
+                                    <span>System Info</span>
+                                </button>
+                                <button class="action-btn" onclick="exportData()">
+                                    <div class="action-icon">📊</div>
+                                    <span>Export Data</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Files Section -->
+                <section class="content-section" id="filesSection">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>File Management</h2>
+                            <p>View, preview, and manage all user files</p>
+                        </div>
+                        <div class="section-actions">
+                            <div class="filter-dropdown">
+                                <select id="fileFilter">
+                                    <option value="all">All Files</option>
+                                    <option value="public">Public Files</option>
+                                    <option value="private">Private Files</option>
+                                    <option value="recent">Recent</option>
+                                </select>
+                            </div>
+                            <button class="btn-secondary" onclick="refreshFiles()">
+                                <span>🔄</span>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="files-table-container">
+                        <table class="files-table">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Owner</th>
+                                    <th>Size</th>
+                                    <th>Privacy</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filesTableBody">
+                                <!-- Files will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Users Section -->
+                <section class="content-section" id="usersSection">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>User Management</h2>
+                            <p>Manage user accounts and permissions</p>
+                        </div>
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="showAddUserModal()">
+                                <span>+</span>
+                                Add User
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="users-grid" id="usersGrid">
+                        <!-- Users will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section class="content-section" id="analyticsSection">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Analytics</h2>
+                            <p>System performance and usage statistics</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="chart-card glass-card">
+                            <h3>File Upload Trends</h3>
+                            <div class="chart-container">
+                                <div class="chart-placeholder">
+                                    <div class="chart-bars">
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 80%"></div>
+                                        <div class="chart-bar" style="height: 45%"></div>
+                                        <div class="chart-bar" style="height: 90%"></div>
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                        <div class="chart-bar" style="height: 95%"></div>
+                                        <div class="chart-bar" style="height: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card glass-card">
+                            <h3>User Activity</h3>
+                            <div class="chart-container">
+                                <div class="activity-chart">
+                                    <div class="activity-item">
+                                        <span>File Uploads</span>
+                                        <div class="activity-bar">
+                                            <div class="activity-fill" style="width: 85%"></div>
+                                        </div>
+                                        <span>85%</span>
+                                    </div>
+                                    <div class="activity-item">
+                                        <span>Downloads</span>
+                                        <div class="activity-bar">
+                                            <div class="activity-fill" style="width: 70%"></div>
+                                        </div>
+                                        <span>70%</span>
+                                    </div>
+                                    <div class="activity-item">
+                                        <span>Searches</span>
+                                        <div class="activity-bar">
+                                            <div class="activity-fill" style="width: 60%"></div>
+                                        </div>
+                                        <span>60%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="content-section" id="settingsSection">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>System Settings</h2>
+                            <p>Configure system preferences and security</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="setting-group glass-card">
+                            <h3>General Settings</h3>
+                            <div class="setting-item">
+                                <label>Site Name</label>
+                                <input type="text" value="LiquidDocs" class="setting-input">
+                            </div>
+                            <div class="setting-item">
+                                <label>Max File Size (MB)</label>
+                                <input type="number" value="100" class="setting-input">
+                            </div>
+                            <div class="setting-item">
+                                <label>Auto-delete files after (days)</label>
+                                <input type="number" value="365" class="setting-input">
+                            </div>
+                            <button class="btn-primary">Save Changes</button>
+                        </div>
+
+                        <div class="setting-group glass-card">
+                            <h3>Security Settings</h3>
+                            <div class="setting-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span class="checkmark"></span>
+                                    Enable two-factor authentication
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span class="checkmark"></span>
+                                    Require email verification
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    Allow public file sharing
+                                </label>
+                            </div>
+                            <button class="btn-primary">Update Security</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div class="modal-overlay hidden" id="filePreviewModal">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3 id="previewFileName">File Preview</h3>
+                <button class="modal-close" onclick="closeFilePreview()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-preview-content" id="filePreviewContent">
+                    <!-- Preview content will be populated here -->
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeFilePreview()">Close</button>
+                    <button class="btn-danger" onclick="deleteCurrentFile()">Delete File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
