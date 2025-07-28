@@ -161,7 +161,7 @@ const Session = {
   logout: () => {
     Storage.remove('user');
     Storage.remove('isLoggedIn');
-    window.location.href = 'login.html';
+    window.location.href = 'new_login.html';
   },
   
   getUser: () => {
@@ -169,12 +169,12 @@ const Session = {
   },
   
   isLoggedIn: () => {
-    return Storage.get('isLoggedIn') === true;
+    return Storage.get('isLoggedIn') === 'true';
   },
   
   requireAuth: () => {
     if (!Session.isLoggedIn()) {
-      window.location.href = 'login.html';
+      window.location.href = 'new_login.html';
     }
   }
 };
@@ -191,6 +191,8 @@ const FileManager = {
       type: file.type,
       privacy: file.privacy || 'public',
       uploadDate: new Date().toISOString(),
+      owner: Session.getUser()?.email || 'guest',
+      ownerName: Session.getUser()?.profileName || Session.getUser()?.name || 'Unknown',
       ...file
     };
     

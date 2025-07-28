@@ -4,18 +4,30 @@ class AdminDashboard {
   constructor() {
     this.currentSection = 'dashboard';
     this.files = FileManager.getAll();
-    this.users = this.generateMockUsers();
-    this.activities = this.generateMockActivities();
+    this.users = this.generateUsers();
     this.init();
   }
   
   init() {
-    // Check authentication
-    Session.requireAuth();
-    const user = Session.getUser();
+    // Check admin authentication
+    const isAdminAuthenticated = sessionStorage.getItem('isAdminAuthenticated') === 'true';
     
-    if (user.role !== 'admin') {
-      window.location.href = 'user.html';
+    // Get user from session storage
+    let user = null;
+    try {
+      const userData = sessionStorage.getItem('user');
+      if (userData) {
+        user = JSON.parse(userData);
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+    }
+    
+    if (!isAdminAuthenticated || !user || user.role !== 'admin') {
+      // Clear any existing session and redirect to login
+      sessionStorage.removeItem('isAdminAuthenticated');
+      sessionStorage.removeItem('user');
+      window.location.href = 'admin_login.html';
       return;
     }
     
@@ -62,89 +74,60 @@ class AdminDashboard {
     }
   }
   
-  generateMockUsers() {
-    return [
-      { 
-        id: 1, 
-        name: 'John Doe', 
-        email: 'john@example.com', 
-        role: 'user', 
-        lastActive: '2024-01-15', 
-        filesCount: 23,
-        storageUsed: 45000000,
-        joinDate: '2023-06-15'
-      },
-      { 
-        id: 2, 
-        name: 'Jane Smith', 
-        email: 'jane@example.com', 
-        role: 'user', 
-        lastActive: '2024-01-14', 
-        filesCount: 45,
-        storageUsed: 78000000,
-        joinDate: '2023-08-22'
-      },
-      { 
-        id: 3, 
-        name: 'Mike Johnson', 
-        email: 'mike@example.com', 
-        role: 'user', 
-        lastActive: '2024-01-13', 
-        filesCount: 12,
-        storageUsed: 23000000,
-        joinDate: '2023-11-10'
-      },
-      { 
-        id: 4, 
-        name: 'Sarah Wilson', 
-        email: 'sarah@example.com', 
-        role: 'user', 
-        lastActive: '2024-01-12', 
-        filesCount: 67,
-        storageUsed: 120000000,
-        joinDate: '2023-04-03'
+  generateUsers() {
+    // Aggregate users from file metadata
+    const userMap = {};
+    FileManager.getAll().forEach(file => {
+      const email = file.owner || 'guest';
+      if (!userMap[email]) {
+        userMap[email] = {
+          id: email,
+          name: file.ownerName || 'Unknown',
+          email: email,
+          role: email === 'admin@demo.com' ? 'admin' : 'user',
+          filesCount: 0,
+          storageUsed: 0,
+          joinDate: file.uploadDate,
+          lastActive: file.uploadDate
+        };
       }
-    ];
+      const u = userMap[email];
+      u.filesCount += 1;
+      u.storageUsed += file.size || 0;
+      if (new Date(file.uploadDate) < new Date(u.joinDate)) u.joinDate = file.uploadDate;
+      if (new Date(file.uploadDate) > new Date(u.lastActive)) u.lastActive = file.uploadDate;
+    });
+    const users = Object.values(userMap);
+    // Fallback if no users found
+    if (users.length === 0) {
+      return [{
+        id: 'guest',
+        name: 'Guest User',
+        email: 'guest',
+        role: 'guest',
+        filesCount: 0,
+        storageUsed: 0,
+        joinDate: new Date().toISOString(),
+        lastActive: new Date().toISOString()
+      }];
+    }
+    return users.sort((a, b) => a.name.localeCompare(b.name));
   }
   
-  generateMockActivities() {
-    return [
-      { 
-        icon: '📤', 
-        title: 'New file uploaded', 
-        description: 'Project Report.pdf by John Doe',
-        time: '2 minutes ago', 
-        type: 'upload'
-      },
-      { 
-        icon: '👤', 
-        title: 'New user registered', 
-        description: 'Sarah Wilson joined the platform',
-        time: '15 minutes ago', 
-        type: 'user'
-      },
-      { 
-        icon: '🗑️', 
-        title: 'File deleted', 
-        description: 'Old backup.zip by Jane Smith',
-        time: '1 hour ago', 
-        type: 'delete'
-      },
-      { 
-        icon: '🔒', 
-        title: 'File made private', 
-        description: 'Confidential.docx by Mike Johnson',
-        time: '2 hours ago', 
-        type: 'privacy'
-      },
-      { 
-        icon: '📊', 
-        title: 'Analytics report generated', 
-        description: 'Monthly usage report created',
-        time: '3 hours ago', 
-        type: 'system'
-      }
-    ];
+  generateActivities() {
+    // Generate activities from real file events (upload, privacy, delete)
+    const files = FileManager.getAll();
+    // Sort files by uploadDate descending
+    const sortedFiles = files.slice().sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+    // Map to activity objects
+    const activities = sortedFiles.map(file => ({
+      icon: file.privacy === 'private' ? '🔒' : '📤',
+      title: file.privacy === 'private' ? 'File made private' : 'New file uploaded',
+      description: `${file.name} by ${file.ownerName || file.owner || 'Unknown'}`,
+      time: Utils.timeAgo(file.uploadDate),
+      type: file.privacy === 'private' ? 'privacy' : 'upload'
+    }));
+    return activities;
   }
   
   switchSection(sectionName) {
@@ -220,8 +203,9 @@ class AdminDashboard {
   populateActivities() {
     const activityList = document.getElementById('activityList');
     if (!activityList) return;
-    
-    activityList.innerHTML = this.activities.map(activity => `
+    // Always use up-to-date activities
+    const activities = this.generateActivities();
+    activityList.innerHTML = activities.map(activity => `
       <div class="activity-item">
         <div class="activity-icon">${activity.icon}</div>
         <div class="activity-content">
@@ -237,13 +221,14 @@ class AdminDashboard {
     const filesTableBody = document.getElementById('filesTableBody');
     if (!filesTableBody) return;
     
-    const files = FileManager.getAll();
+    // Get all files and filter out private ones
+    const files = FileManager.getAll().filter(file => file.privacy !== 'private');
     
     if (files.length === 0) {
       filesTableBody.innerHTML = `
         <tr>
           <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-            No files found
+            No public files found
           </td>
         </tr>
       `;

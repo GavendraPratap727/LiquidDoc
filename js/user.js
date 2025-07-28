@@ -6,42 +6,71 @@ class UserDashboard {
     this.files = FileManager.getAll();
     this.currentFilter = 'all';
     this.currentView = 'grid';
+    this.currentSearch = ''; // holds current global search string
     this.init();
   }
   
   init() {
-    // Check authentication
-    Session.requireAuth();
-    const user = Session.getUser();
+    // Try to get user data from localStorage
+    const userData = JSON.parse(localStorage.getItem('user')) || {
+      name: 'Guest User',
+      email: 'guest@example.com',
+      role: 'user'
+    };
+
+    // Set up user object with defaults if not present
+    const user = {
+      name: userData.name || 'Guest User',
+      email: userData.email || 'guest@example.com',
+      role: userData.role || 'user',
+      avatar: this.getInitials(userData.name || 'GU'),
+      joinDate: userData.createdAt || new Date().toISOString(),
+      storageUsed: userData.storageUsed || '0 MB',
+      storageLimit: userData.storageLimit || '1 GB'
+    };
     
-    if (user.role === 'admin') {
-      window.location.href = 'admin.html';
-      return;
-    }
+    // Set user in session
+    Session.login(user);
     
     this.updateUserInfo(user);
     this.initEventListeners();
-    this.initDragAndDrop();
     this.updateStats();
     this.populateRecentFiles();
     this.populateFiles();
+    this.initDragAndDrop();
+  }
+  
+  getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   }
   
   updateUserInfo(user) {
-    const userName = document.getElementById('userName');
-    const userAvatar = document.getElementById('userAvatar');
-    const userEmail = document.getElementById('userEmail');
-    
-    if (userName) {
-      userName.textContent = user.name || user.email.split('@')[0];
-    }
-    
-    if (userAvatar) {
-      userAvatar.textContent = (user.name || user.email).charAt(0).toUpperCase();
-    }
-    
-    if (userEmail) {
-      userEmail.value = user.email;
+    try {
+      // Update user info in the UI
+      document.querySelectorAll('.user-name').forEach(el => {
+        el.textContent = user.name;
+      });
+      
+      document.querySelectorAll('.user-email').forEach(el => {
+        el.textContent = user.email;
+      });
+      
+      // Update avatar with initials
+      const avatar = document.querySelector('.user-avatar');
+      if (avatar) {
+        avatar.textContent = this.getInitials(user.name);
+      }
+      
+      // Update any other user-related UI elements
+      const greeting = document.querySelector('.greeting');
+      if (greeting) {
+        const hours = new Date().getHours();
+        const timeOfDay = hours < 12 ? 'Morning' : hours < 18 ? 'Afternoon' : 'Evening';
+        greeting.textContent = `Good ${timeOfDay}, ${user.name.split(' ')[0]}!`;
+      }
+      
+    } catch (error) {
+      console.error('Error updating user info:', error);
     }
   }
   
@@ -210,7 +239,18 @@ class UserDashboard {
     
     uploadFilesList.appendChild(fileItem);
     
-    // Simulate upload progress
+    // Read file as Data URL for download
+  // Create blob URL for reliable download regardless of size
+  const blobUrl = URL.createObjectURL(file);
+  
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  
+  // Simulate upload progress
     let progress = 0;
     const interval = setInterval(() => {
       progress += Math.random() * 15 + 5;
@@ -224,7 +264,9 @@ class UserDashboard {
           name: file.name,
           size: file.size,
           type: file.type,
-          privacy: isPrivate ? 'private' : 'public'
+          privacy: isPrivate ? 'private' : 'public',
+        content: dataUrl,
+        blobUrl
         });
         
         // Update UI
@@ -299,30 +341,41 @@ class UserDashboard {
   populateFiles() {
     const filesGrid = document.getElementById('filesGrid');
     const emptyState = document.getElementById('emptyState');
-    
-    let files = FileManager.getAll();
-    
+
+    // Only show files belonging to the current user
+    const user = Session.getUser();
+    const userEmail = user && user.email;
+    let files = FileManager.getAll().filter(f => f.owner === userEmail);
+
     // Apply filter
     if (this.currentFilter !== 'all') {
-      files = FileManager.filter(this.currentFilter);
+      files = files.filter(f => {
+        if (this.currentFilter === 'public') return f.privacy === 'public';
+        if (this.currentFilter === 'private') return f.privacy === 'private';
+        return true;
+      });
     }
-    
+    // Apply search query
+    if (this.currentSearch && this.currentSearch.trim()) {
+      files = files.filter(f => f.name.toLowerCase().includes(this.currentSearch.toLowerCase()));
+    }
+
     if (files.length === 0) {
       filesGrid.style.display = 'none';
       emptyState.classList.remove('hidden');
       return;
     }
-    
+
     emptyState.classList.add('hidden');
     filesGrid.style.display = 'grid';
-    
+
     // Apply view mode
     if (this.currentView === 'list') {
       filesGrid.classList.add('list-view');
     } else {
       filesGrid.classList.remove('list-view');
     }
-    
+
     filesGrid.innerHTML = files.map((file, index) => `
       <div class="file-card ${file.privacy}" data-file-id="${file.id}" onclick="previewFile('${file.id}')" style="animation-delay: ${index * 0.1}s">
         <div class="file-card-icon">${Utils.getFileIcon(file.type)}</div>
@@ -362,14 +415,18 @@ class UserDashboard {
   }
   
   handleGlobalSearch(query) {
-    if (!query.trim()) return;
-    
-    const results = FileManager.search(query);
-    console.log('Search results:', results);
-    
-    // Switch to files section and filter
+    // Update search string
+    this.currentSearch = query;
+    // Reset filter to show all files
+    this.currentFilter = 'all';
+    // Update filter tab UI
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    const allTab = document.querySelector('[data-filter="all"]');
+    if (allTab) allTab.classList.add('active');
+    // Always show files section when searching
     this.switchSection('files');
-    // You could implement a search filter here
+    // Refresh list
+    this.populateFiles();
   }
   
   searchPublicFiles(query = '') {
@@ -386,14 +443,10 @@ class UserDashboard {
       return;
     }
     
-    // Simulate public file search
-    const mockPublicFiles = [
-      { id: 'pub1', name: 'Project Proposal.pdf', owner: 'John Doe', size: 2048000, type: 'application/pdf', uploadDate: new Date().toISOString() },
-      { id: 'pub2', name: 'Marketing Strategy.docx', owner: 'Jane Smith', size: 1536000, type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', uploadDate: new Date().toISOString() },
-      { id: 'pub3', name: 'Budget Analysis.xlsx', owner: 'Mike Johnson', size: 1024000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', uploadDate: new Date().toISOString() }
-    ];
+        // Retrieve all uploaded files (only those marked public)
+    const allFiles = FileManager.getAll().filter(f => (f.privacy || 'public') === 'public');
     
-    const results = mockPublicFiles.filter(file => 
+    const results = allFiles.filter(file => 
       file.name.toLowerCase().includes(query.toLowerCase())
     );
     
@@ -483,13 +536,38 @@ function downloadFile(fileId) {
   const file = FileManager.get(fileId);
   if (!file) return;
   
-  // Simulate download
   const link = document.createElement('a');
   link.download = file.name;
-  link.href = '#';
-  link.click();
   
-  // Show success message
+  if (file.blobUrl) {
+    link.href = file.blobUrl;
+  } else if (file.content && file.content.startsWith('data:')) {
+    // Convert data URL to Blob for accurate size
+    const blob = (function dataURLtoBlob(dataURL) {
+      const arr = dataURL.split(',');
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    })(file.content);
+    link.href = URL.createObjectURL(blob);
+  } else {
+    // Fallback (should rarely happen)
+    const blob = new Blob([''], { type: file.type || 'application/octet-stream' });
+    link.href = URL.createObjectURL(blob);
+  }
+  document.body.appendChild(link);
+  link.click();
+  if (!file.blobUrl) {
+    setTimeout(() => URL.revokeObjectURL(link.href), 100);
+  }
+  link.remove();
+  
   showToast(`Downloaded: ${file.name}`, 'success');
 }
 

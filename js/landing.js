@@ -222,47 +222,47 @@ class ContactForm {
   
   async handleSubmit() {
     const formData = new FormData(this.form);
-    const data = Object.fromEntries(formData);
-    
-    // Show loading state
     const submitBtn = this.form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
+    const resultDiv = document.getElementById('result');
+    
+    // Show loading state
     submitBtn.innerHTML = '<div class="loading-spinner"></div>';
     submitBtn.disabled = true;
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Show success message
-    this.showSuccessMessage();
-    
-    // Reset form
-    this.form.reset();
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
+    try {
+      // Submit to Web3Forms
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        resultDiv.textContent = 'Message sent successfully! We\'ll get back to you soon.';
+        resultDiv.style.backgroundColor = '#10b981';
+        resultDiv.style.display = 'block';
+        this.form.reset();
+        setTimeout(() => {
+          resultDiv.style.display = 'none';
+        }, 5000);
+      } else {
+        throw new Error(data.message || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      resultDiv.textContent = 'Failed to send message. Please try again later.';
+      resultDiv.style.backgroundColor = '#ef4444';
+      resultDiv.style.display = 'block';
+    } finally {
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    }
   }
   
-  showSuccessMessage() {
-    const message = document.createElement('div');
-    message.className = 'success-message';
-    message.innerHTML = `
-      <div class="success-content">
-        <div class="success-icon">✓</div>
-        <div class="success-text">Message sent successfully!</div>
-      </div>
-    `;
-    
-    document.body.appendChild(message);
-    
-    setTimeout(() => {
-      message.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-      message.classList.remove('show');
-      setTimeout(() => message.remove(), 300);
-    }, 3000);
-  }
+  // showSuccessMessage is no longer needed as we're using the result div
+  // for displaying messages
 }
 
 // Magnetic button effects
@@ -352,7 +352,7 @@ function navigateToLogin() {
   }, 10);
   
   setTimeout(() => {
-    window.location.href = 'login.html';
+    window.location.href = 'new_login.html';
   }, 800);
 }
 

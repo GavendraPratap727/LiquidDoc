@@ -37,10 +37,14 @@
                 <a href="#home" class="nav-link active">Home</a>
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#about" class="nav-link">About</a>
                 <a href="#contact" class="nav-link">Contact</a>
                 <button class="btn-primary nav-cta" onclick="navigateToLogin()">
                     <span>Get Started</span>
                     <div class="btn-glow"></div>
+                </button>
+                <button class="theme-toggle nav-theme-toggle" onclick="toggleTheme()">
+                    <div class="theme-icon">🌙</div>
                 </button>
             </div>
             <div class="nav-toggle" id="navToggle">
@@ -242,6 +246,72 @@
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title gradient-text">About LiquidDocs</h2>
+                <p class="section-subtitle">Redefining document management for the modern age</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text" data-aos="fade-right">
+                    <div class="about-card glass-card">
+                        <h3>Our Mission</h3>
+                        <p>At LiquidDocs, we're on a mission to transform how businesses and individuals interact with their documents. We believe document management should be intuitive, secure, and even enjoyable.</p>
+                        <p>Our platform combines cutting-edge technology with beautiful design to create an experience that flows as naturally as water.</p>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number">15K+</span>
+                                <span class="stat-label">Active Users</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">99.9%</span>
+                                <span class="stat-label">Uptime</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-features" data-aos="fade-left">
+                    <div class="feature-highlights">
+                        <div class="highlight-item innovation">
+                            <div class="highlight-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 18l6-6-6-6"/>
+                                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="highlight-content">
+                                <h4>Innovation</h4>
+                                <p>Cutting-edge AI technology for smarter document management</p>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-item security">
+                            <div class="highlight-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div class="highlight-content">
+                                <h4>Security</h4>
+                                <p>Military-grade encryption to protect your sensitive data</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Section -->
+                    <div class="about-cta" data-aos="fade-up">
+                        <h3>Ready to experience the future of document management?</h3>
+                        <button class="btn-primary btn-large magnetic-btn" onclick="navigateToLogin()">
+                            <span>Get Started Free</span>
+                            <div class="btn-glow"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section class="contact-section" id="contact">
         <div class="container">
@@ -274,23 +344,33 @@
                     </div>
                 </div>
                 <div class="contact-form-container" data-aos="fade-left">
-                    <form class="contact-form" id="contactForm">
+                    <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+                        <!-- Web3Forms Access Key -->
+                        <input type="hidden" name="access_key" value="8055d0be-c260-4299-a7bf-77fe827fd882">
+                        
+                        <!-- Honeypot Spam Protection -->
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                        
+                        <!-- Form Inputs -->
                         <div class="form-group">
-                            <input type="text" id="name" required>
+                            <input type="text" id="name" name="name" required>
                             <label for="name">Your Name</label>
                         </div>
                         <div class="form-group">
-                            <input type="email" id="email" required>
+                            <input type="email" id="email" name="email" required>
                             <label for="email">Email Address</label>
                         </div>
                         <div class="form-group">
-                            <textarea id="message" rows="5" required></textarea>
+                            <textarea id="message" name="message" rows="5" required></textarea>
                             <label for="message">Your Message</label>
                         </div>
                         <button type="submit" class="btn-primary btn-large">
                             <span>Send Message</span>
                             <div class="btn-glow"></div>
                         </button>
+                        
+                        <!-- Success/Error Messages -->
+                        <div id="result" class="form-message" style="display: none; margin-top: 20px; padding: 10px; border-radius: 4px;"></div>
                     </form>
                 </div>
             </div>
@@ -336,8 +416,62 @@
             </div>
         </div>
     </footer>
+    <script>
+      const KEY = 'liquiddoc_uploads'; // single localStorage key
+
+      function getUploads() {
+        return JSON.parse(localStorage.getItem(KEY) || '[]');
+      }
+
+      function saveUploads(arr) {
+        localStorage.setItem(KEY, JSON.stringify(arr));
+      }
+
+      document.getElementById('fileInput').addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Convert file to base-64 so the actual data is stored (remove this block if only metadata is needed)
+        const toBase64 = f => new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = () => res(r.result);
+          r.onerror = rej;
+          r.readAsDataURL(f); // data:*/*;base64,....
+        });
+        const dataUrl = await toBase64(file);
+
+        const uploads = getUploads();
+        uploads.push({
+          id: Date.now(),            // simple id
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          savedAt: new Date().toISOString(),
+          content: dataUrl           // remove if not storing file content
+        });
+        saveUploads(uploads);
+        alert('Saved to localStorage!');
+        renderList();
+      });
+
+      /* Populate upload list in the UI */
+      function renderList() {
+        const existing = document.getElementById('uploadsList');
+        if (existing) existing.remove();
+        const ul = document.createElement('ul');
+        ul.id = 'uploadsList';
+        getUploads().forEach(u => {
+          const li = document.createElement('li');
+          li.textContent = `${u.name} (${(u.size / 1024).toFixed(1)} kB)`;
+          ul.appendChild(li);
+        });
+        document.body.appendChild(ul);
+      }
+      renderList();
+    </script>
 
     <script src="js/shared.js"></script>
     <script src="js/landing.js"></script>
+    <script src="js/theme.js"></script>
 </body>
 </html>

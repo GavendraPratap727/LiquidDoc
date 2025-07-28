@@ -22,10 +22,10 @@
                     <span class="gradient-text">LiquidDocs</span>
                 </div>
                 <div class="user-profile">
-                    <div class="profile-avatar" id="userAvatar">U</div>
+                    <div class="profile-avatar user-avatar">U</div>
                     <div class="profile-info">
-                        <div class="profile-name" id="userName">User</div>
-                        <div class="profile-role">Member</div>
+                        <div class="profile-name user-name">User</div>
+                        <div class="profile-email user-email">user@example.com</div>
                     </div>
                 </div>
             </div>
@@ -67,8 +67,8 @@
         <main class="main-content">
             <header class="content-header">
                 <div class="header-left">
-                    <h1 id="pageTitle">Dashboard</h1>
-                    <p id="pageSubtitle">Welcome back to your workspace</p>
+                    <h1 class="greeting">Welcome back to your workspace</h1>
+                    <p id="pageSubtitle">Manage your documents efficiently</p>
                 </div>
                 <div class="header-right">
                     <div class="search-container">
@@ -130,7 +130,7 @@
                                 </div>
                                 <h3>Drop files here to upload</h3>
                                 <p>or <button class="link-btn" onclick="document.getElementById('fileInput').click()">browse your device</button></p>
-                                <input type="file" id="fileInput" multiple style="display: none;">
+                                <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.bmp,.webp">
                                 
                                 <div class="privacy-toggle">
                                     <label class="toggle-label">

@@ -117,7 +117,15 @@ class LoginManager {
     try {
       // Simulate API call
       await this.simulateSignup(fullName, email, password);
-      this.handleSuccessfulLogin(email, fullName);
+      
+      // Show success message
+      this.showSuccessAnimation();
+      
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        window.location.href = 'new_login.html';
+      }, 1000);
+      
     } catch (error) {
       this.showError('Signup failed. Please try again.');
       this.hideLoadingState(e.target);
@@ -212,16 +220,27 @@ class LoginManager {
       loginTime: new Date().toISOString()
     };
     
-    Session.login(userData);
+    // Set session flag based on role
+    if (this.currentRole === 'admin') {
+      sessionStorage.setItem('isAdminAuthenticated', 'true');
+      sessionStorage.setItem('user', JSON.stringify(userData));
+    } else {
+      // For regular users, store in session storage
+      sessionStorage.setItem('user', JSON.stringify(userData));
+      sessionStorage.setItem('isLoggedIn', 'true');
+    }
     
     // Save email for next time
     localStorage.setItem('savedEmail', email);
     
     // Redirect after animation
     setTimeout(() => {
-      const redirectUrl = this.currentRole === 'admin' ? 'admin.html' : 'user.html';
-      window.location.href = redirectUrl;
-    }, 2000);
+      if (this.currentRole === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'user.html';
+      }
+    }, 1000);
   }
   
   showLoadingState(form) {
